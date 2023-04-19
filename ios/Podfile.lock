@@ -19,6 +19,8 @@ PODS:
     - Flutter
   - geolocator_apple (1.2.0):
     - Flutter
+  - home_widget (0.0.1):
+    - Flutter
   - IosAwnCore (0.7.3)
   - location (0.0.1):
     - Flutter
@@ -42,6 +44,7 @@ DEPENDENCIES:
   - flutter_sensors (from `.symlinks/plugins/flutter_sensors/ios`)
   - geocoding (from `.symlinks/plugins/geocoding/ios`)
   - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
+  - home_widget (from `.symlinks/plugins/home_widget/ios`)
   - location (from `.symlinks/plugins/location/ios`)
   - path_provider_ios (from `.symlinks/plugins/path_provider_ios/ios`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
@@ -73,6 +76,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/geocoding/ios"
   geolocator_apple:
     :path: ".symlinks/plugins/geolocator_apple/ios"
+  home_widget:
+    :path: ".symlinks/plugins/home_widget/ios"
   location:
     :path: ".symlinks/plugins/location/ios"
   path_provider_ios:
@@ -95,6 +100,7 @@ SPEC CHECKSUMS:
   flutter_sensors: dc6eed3291e7724bf8f4138d7d14c4071b42bd29
   geocoding: 32cfcdb16d38d907caaba65e2e42ad10d38bee58
   geolocator_apple: cc556e6844d508c95df1e87e3ea6fa4e58c50401
+  home_widget: 0434835a4c9a75704264feff6be17ea40e0f0d57
   IosAwnCore: 6494e0e174d49f04f513e8a002187be226889a37
   location: 3a2eed4dd2fab25e7b7baf2a9efefe82b512d740
   path_provider_ios: 14f3d2fd28c4fdb42f44e0f751d12861c43cee02

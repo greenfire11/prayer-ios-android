@@ -1,7 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'dart:ffi';
-
+import 'package:home_widget/home_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -10,6 +10,7 @@ import 'package:ios_prayer/calendar_screen2.dart';
 import 'calendar_screen.dart';
 import 'city_screen.dart';
 import 'compass_screen.dart';
+import 'package:intl/intl.dart';
 import 'dua_text.dart';
 import 'missed_screen.dart';
 import 'settings_screen.dart';
@@ -31,6 +32,12 @@ import 'compass_screen2.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'city_screen.dart';
 
+extension StringExtension on String {
+  String capitalize() {
+    return "${this[0].toUpperCase()}${this.substring(1).toLowerCase()}";
+  }
+}
+
 String format(date, {bool format24 = true}) {
   if (format24 == true) {
     return DateFormat.Hm().format(date);
@@ -51,6 +58,62 @@ String format(date, {bool format24 = true}) {
   print(format);
   return format;
   """;
+}
+
+void saveToWidget() async {
+  tz.initializeTimeZones();
+  String ti = await FlutterNativeTimezone.getLocalTimezone();
+  final prefs = await SharedPreferences.getInstance();
+  var lat = prefs.getStringList("location")![0];
+  var long = prefs.getStringList("location")![1];
+  var mad = prefs.getString("madhab");
+  var method = prefs.getString("method");
+  var today = getDataDay(0, lat, long, ti, mad, method);
+  bool format24 = prefs.getBool("24format")!;
+
+  List prayerTimesL = getDataDay(0, lat, long, ti, mad, method);
+  prayerTimesL.removeAt(1);
+
+  List prayerTimesString = [];
+
+  for (int i = 0; i < 5; i++) {
+    prayerTimesString.add(
+      format(prayerTimesL[i], format24: format24),
+    );
+  }
+  var next = getNext(lat, long, ti, mad, method);
+  if (next == "fajrafter") {
+    next = "fajr";
+  }
+  print(prayerTimesString);
+  String nextString = next.capitalize();
+
+  String nextPrayer =
+      format(getNextTime(lat, long, ti, mad, method), format24: format24);
+
+  HomeWidget.saveWidgetData('title', nextString);
+  HomeWidget.saveWidgetData('location', "${double.parse(lat).toStringAsFixed(2)}, ${double.parse(long).toStringAsFixed(2)}");
+
+  HomeWidget.saveWidgetData('message', nextPrayer);
+  HomeWidget.saveWidgetData('prayerTimes', prayerTimesString);
+
+  HomeWidget.updateWidget(
+      name: 'HomeWidgetProvider', iOSName: 'prayerTimeWidget');
+}
+
+DateTime getNextTime(lat, long, ti, mad, method) {
+  final timezone = tz.getLocation(ti);
+  final now = DateTime.now();
+  CalculationParameters params = calcMethods[method];
+  Coordinates coordinates =
+      new Coordinates(double.parse(lat), double.parse(long));
+  params.madhab = madhab[mad];
+  PrayerTimes prayerTimes =
+      new PrayerTimes(coordinates, now, params, precision: false);
+  var next = prayerTimes.nextPrayer();
+  DateTime time = prayerTimes.timeForPrayer(next)!;
+  DateTime date = new tz.TZDateTime.from(time, timezone);
+  return date;
 }
 
 final calcMethods = {
@@ -617,6 +680,8 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     if (AppLifecycleState.resumed == state) {
       getPrayerTimes(refresh: true);
       createAllNoti();
+      HomeWidget.setAppGroupId('group.com.jafar.alQibla.Widget');
+      saveToWidget();
     }
   }
 
@@ -626,6 +691,8 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     getPrayerTimes();
     createAllNoti();
     WidgetsBinding.instance.addObserver(this);
+    HomeWidget.setAppGroupId('group.com.jafar.alQibla.Widget');
+    saveToWidget();
     super.initState();
   }
 
