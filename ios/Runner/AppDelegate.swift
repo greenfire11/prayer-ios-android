@@ -21,7 +21,7 @@ import flutter_local_notifications
                   // Note : all of the app's plugins may not be required in this context ;
                   // instead of using GeneratedPluginRegistrant.register(with: registry),
                   // you may want to register only specific plugins.
-                  AppDelegate.registerPlugins(with: registry)
+                  GeneratedPluginRegistrant.register(with: registry)
               }
 
       if #available(iOS 10.0, *) {

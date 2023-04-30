@@ -59,6 +59,22 @@ String format(date, {bool format24 = true}) {
   return format;
   """;
 }
+const simpleTaskKey = "be.tramckrijte.workmanagerExample.simpleTask";
+@pragma('vm:entry-point')
+void callbackDispatcher() {
+  Workmanager().executeTask((task, inputData) async {
+    switch (task) {
+      case simpleTaskKey:
+        saveToWidget();
+        break;
+      case Workmanager.iOSBackgroundTask:
+        saveToWidget();
+        break;
+    }
+    bool success = true;
+    return Future.value(success);
+  });
+}
 
 void saveToWidget() async {
   tz.initializeTimeZones();
@@ -92,7 +108,8 @@ void saveToWidget() async {
       format(getNextTime(lat, long, ti, mad, method), format24: format24);
 
   HomeWidget.saveWidgetData('title', nextString);
-  HomeWidget.saveWidgetData('location', "${double.parse(lat).toStringAsFixed(2)}, ${double.parse(long).toStringAsFixed(2)}");
+  HomeWidget.saveWidgetData('location',
+      "${double.parse(lat).toStringAsFixed(2)}, ${double.parse(long).toStringAsFixed(2)}");
 
   HomeWidget.saveWidgetData('message', nextPrayer);
   HomeWidget.saveWidgetData('prayerTimes', prayerTimesString);
@@ -397,6 +414,11 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   tz.initializeTimeZones();
   await NotificationApi.init();
+  Workmanager().initialize(
+    callbackDispatcher, // The top level function, aka callbackDispatcher
+    isInDebugMode: true // If enabled it will post a notification whenever the task is running. Handy for debugging tasks
+  );
+  Workmanager().registerOneOffTask(simpleTaskKey, simpleTaskKey);
 
   String ti = await FlutterNativeTimezone.getLocalTimezone();
   ErrorWidget.builder = (FlutterErrorDetails details) => Container();

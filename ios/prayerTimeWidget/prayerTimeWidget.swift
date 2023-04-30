@@ -8,6 +8,8 @@
 import WidgetKit
 import SwiftUI
 
+
+
 private let widgetGroupId = "group.com.jafar.alQibla.Widget"    
 
 struct Provider: TimelineProvider {
@@ -42,9 +44,10 @@ struct ExampleEntry: TimelineEntry {
 struct prayerTimeWidgetEntryView : View {
     var entry: Provider.Entry
     let data = UserDefaults.init(suiteName:widgetGroupId)
+    
     @Environment(\.widgetFamily) var family: WidgetFamily
     var body: some View {
-
+        
         switch family {
         case .systemSmall:
             VStack {
